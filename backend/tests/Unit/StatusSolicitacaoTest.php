@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Enums\StatusSolicitacao;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class StatusSolicitacaoTest extends TestCase
 {
@@ -37,9 +38,7 @@ class StatusSolicitacaoTest extends TestCase
         $this->assertFalse($status->podeTransicionarPara(StatusSolicitacao::RECEBIDA));
     }
 
-    /**
-     * @dataProvider statusFinais
-     */
+    #[DataProvider('statusFinais')]
     public function test_status_finais_nao_permitem_nenhuma_transicao(StatusSolicitacao $status): void
     {
         $this->assertTrue($status->ehFinal());

@@ -29,7 +29,7 @@ enum StatusSolicitacao: string {
 
     public function podeTransicionarPara(self $destino): bool 
     {
-        return in_array($destino, $this->proximosPermitidos, true);
+        return in_array($destino, $this->proximosPermitidos(), true);
     }
 
     public function ehFinal(): bool 
