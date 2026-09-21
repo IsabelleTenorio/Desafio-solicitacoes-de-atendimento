@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AppShell } from '../../../components/layout/AppShell';
-import { mensagemDeErro } from '../../../lib/http';
-import { criarSolicitacao } from '../api';
-import { SolicitacaoForm } from '../components/SolicitacaoForm';
-import type { NovaSolicitacaoFormValues } from '../novaSolicitacaoSchema';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AppShell } from "../../../components/layout/AppShell";
+import { mensagemDeErro } from "../../../lib/http";
+import { criarSolicitacao } from "../api";
+import { SolicitacaoForm } from "../components/SolicitacaoForm";
+import type { NovaSolicitacaoFormValues } from "../novaSolicitacaoSchema";
 
 export function NovaSolicitacaoPage() {
   const navigate = useNavigate();
@@ -34,13 +34,22 @@ export function NovaSolicitacaoPage() {
 
   return (
     <AppShell>
-      <Link to="/" className="mb-4 inline-block text-sm text-primary hover:underline">
+      <Link
+        to="/"
+        className="mb-4 inline-block text-sm text-primary hover:underline"
+      >
         ← Voltar para a lista
       </Link>
 
       <div className="rounded-lg border border-border bg-white p-6">
-        <h1 className="mb-6 text-lg font-semibold text-ink">Nova solicitação</h1>
-        <SolicitacaoForm aoSubmeter={aoSubmeter} enviando={enviando} erroDoServidor={erro} />
+        <h1 className="mb-6 text-lg font-semibold text-ink">
+          Nova solicitação
+        </h1>
+        <SolicitacaoForm
+          aoSubmeter={aoSubmeter}
+          enviando={enviando}
+          erroDoServidor={erro}
+        />
       </div>
     </AppShell>
   );

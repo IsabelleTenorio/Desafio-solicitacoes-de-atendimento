@@ -1,7 +1,13 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
-import { login as loginRequest, logoutRequest } from './api';
-import { TOKEN_KEY, USUARIO_KEY } from '../../lib/http';
-import type { LoginPayload, Usuario } from './types';
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import { login as loginRequest, logoutRequest } from "./api";
+import { TOKEN_KEY, USUARIO_KEY } from "../../lib/http";
+import type { LoginPayload, Usuario } from "./types";
 
 interface AuthContextValor {
   usuario: Usuario | null;
@@ -25,7 +31,9 @@ function lerUsuarioSalvo(): Usuario | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [usuario, setUsuario] = useState<Usuario | null>(() => lerUsuarioSalvo());
+  const [usuario, setUsuario] = useState<Usuario | null>(() =>
+    lerUsuarioSalvo(),
+  );
   const [entrando, setEntrando] = useState(false);
 
   async function login(payload: LoginPayload) {
@@ -52,7 +60,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const valor = useMemo<AuthContextValor>(
-    () => ({ usuario, autenticado: usuario !== null, entrando, login, logout }),
+    () => ({
+      usuario,
+      autenticado: usuario !== null,
+      entrando,
+      login,
+      logout,
+    }),
     [usuario, entrando],
   );
 
@@ -62,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth(): AuthContextValor {
   const contexto = useContext(AuthContext);
   if (!contexto) {
-    throw new Error('useAuth precisa ser usado dentro de um AuthProvider.');
+    throw new Error("useAuth precisa ser usado dentro de um AuthProvider.");
   }
   return contexto;
 }

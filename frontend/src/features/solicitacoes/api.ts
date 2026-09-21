@@ -1,16 +1,16 @@
-import { http } from '../../lib/http';
+import { http } from "../../lib/http";
 import type {
   FiltrosSolicitacoes,
   NovaSolicitacaoPayload,
   Paginado,
   Solicitacao,
   Status,
-} from './types';
+} from "./types";
 
 export async function listarSolicitacoes(
   filtros: FiltrosSolicitacoes,
 ): Promise<Paginado<Solicitacao>> {
-  const { data } = await http.get<Paginado<Solicitacao>>('/solicitacoes', {
+  const { data } = await http.get<Paginado<Solicitacao>>("/solicitacoes", {
     params: filtros,
   });
   return data;
@@ -24,7 +24,10 @@ export async function buscarSolicitacao(id: number): Promise<Solicitacao> {
 export async function criarSolicitacao(
   payload: NovaSolicitacaoPayload,
 ): Promise<Solicitacao> {
-  const { data } = await http.post<{ data: Solicitacao }>('/solicitacoes', payload);
+  const { data } = await http.post<{ data: Solicitacao }>(
+    "/solicitacoes",
+    payload,
+  );
   return data.data;
 }
 

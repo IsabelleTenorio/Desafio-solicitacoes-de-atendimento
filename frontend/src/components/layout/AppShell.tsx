@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { HeartPulse, LogOut } from 'lucide-react';
-import { useAuth } from '../../features/auth/AuthContext';
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { HeartPulse, LogOut } from "lucide-react";
+import { useAuth } from "../../features/auth/AuthContext";
 
 const rotuloPerfil: Record<string, string> = {
-  OPERADOR: 'Operador',
-  ADMINISTRADOR: 'Administrador',
+  OPERADOR: "Operador",
+  ADMINISTRADOR: "Administrador",
 };
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -24,12 +24,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               <span className="text-xs text-ink-soft">Saúde Pública</span>
             </div>
           </div>
-          
+
           {usuario && (
             <div className="flex items-center gap-3 text-sm">
               <span className="text-ink-soft">
-                {usuario.name}{' '}
-                <span className="text-xs text-ink-soft">({rotuloPerfil[usuario.perfil]})</span>
+                {usuario.name}{" "}
+                <span className="text-xs text-ink-soft">
+                  ({rotuloPerfil[usuario.perfil]})
+                </span>
               </span>
               <button
                 type="button"

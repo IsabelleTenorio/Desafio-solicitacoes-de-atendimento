@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
-import { listarSolicitacoes } from '../api';
-import { mensagemDeErro } from '../../../lib/http';
-import type { FiltrosSolicitacoes, Paginado, Solicitacao } from '../types';
+import { useCallback, useEffect, useState } from "react";
+import { listarSolicitacoes } from "../api";
+import { mensagemDeErro } from "../../../lib/http";
+import type { FiltrosSolicitacoes, Paginado, Solicitacao } from "../types";
 
 interface EstadoListagem {
   dados: Paginado<Solicitacao> | null;
@@ -29,14 +29,24 @@ export function useSolicitacoes(filtros: FiltrosSolicitacoes) {
       })
       .catch((erro: unknown) => {
         if (!cancelado) {
-          setEstado({ dados: null, carregando: false, erro: mensagemDeErro(erro) });
+          setEstado({
+            dados: null,
+            carregando: false,
+            erro: mensagemDeErro(erro),
+          });
         }
       });
 
     return () => {
       cancelado = true;
     };
-  }, [filtros.status, filtros.categoria, filtros.prioridade, filtros.page, filtros.per_page]);
+  }, [
+    filtros.status,
+    filtros.categoria,
+    filtros.prioridade,
+    filtros.page,
+    filtros.per_page,
+  ]);
 
   useEffect(() => carregar(), [carregar]);
 
