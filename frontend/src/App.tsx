@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './features/auth/AuthContext';
-import { RequireAuth } from './components/auth/RequireAuth';
+import { RequireAuth } from './features/auth/components/RequireAuth';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { ListaPage } from './features/solicitacoes/pages/ListaPage';
 import { DetalhePage } from './features/solicitacoes/pages/DetalhePage';

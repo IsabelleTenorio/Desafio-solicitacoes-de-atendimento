@@ -4,7 +4,7 @@ import { AppShell } from '../../../components/layout/AppShell';
 import { Spinner } from '../../../components/ui/Spinner';
 import { ErrorState } from '../../../components/ui/ErrorState';
 import { Button } from '../../../components/ui/Button';
-import { SoAdmin } from '../../../components/auth/SoAdmin';
+import { SoAdmin } from '../../auth/components/SoAdmin';
 import { mensagemDeErro } from '../../../lib/http';
 import { useSolicitacao } from '../hooks/useSolicitacao';
 import { atualizarStatusSolicitacao } from '../api';

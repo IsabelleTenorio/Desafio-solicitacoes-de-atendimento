@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useAuth } from '../../features/auth/AuthContext';
+import { useAuth } from '../AuthContext';
 
 /** Apenas usuário ADMINISTRADOR pode cancelar uma solicitação */
 export function SoAdmin({ children }: { children: ReactNode }) {

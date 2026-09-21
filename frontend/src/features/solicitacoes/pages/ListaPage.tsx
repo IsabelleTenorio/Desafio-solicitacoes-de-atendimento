@@ -11,7 +11,7 @@ import { SolicitacaoTable } from '../components/SolicitacaoTable';
 import { Paginacao } from '../components/Paginacao';
 import type { FiltrosSolicitacoes } from '../types';
 
-const FILTROS_INICIAIS: FiltrosSolicitacoes = { page: 1, per_page: 10 };
+const FILTROS_INICIAIS: FiltrosSolicitacoes = { page: 1, per_page: 6 };
 
 export function ListaPage() {
   const [filtros, setFiltros] = useState<FiltrosSolicitacoes>(FILTROS_INICIAIS);
