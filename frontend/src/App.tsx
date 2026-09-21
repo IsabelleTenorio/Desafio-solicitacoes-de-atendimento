@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './features/auth/AuthContext';
+import { RequireAuth } from './components/auth/RequireAuth';
+import { LoginPage } from './features/auth/pages/LoginPage';
 import { ListaPage } from './features/solicitacoes/pages/ListaPage';
 import { DetalhePage } from './features/solicitacoes/pages/DetalhePage';
 import { NovaSolicitacaoPage } from './features/solicitacoes/pages/NovaSolicitacaoPage';
@@ -6,11 +9,36 @@ import { NovaSolicitacaoPage } from './features/solicitacoes/pages/NovaSolicitac
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<ListaPage />} />
-        <Route path="/solicitacoes/nova" element={<NovaSolicitacaoPage />} />
-        <Route path="/solicitacoes/:id" element={<DetalhePage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <ListaPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/solicitacoes/nova"
+            element={
+              <RequireAuth>
+                <NovaSolicitacaoPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/solicitacoes/:id"
+            element={
+              <RequireAuth>
+                <DetalhePage />
+              </RequireAuth>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

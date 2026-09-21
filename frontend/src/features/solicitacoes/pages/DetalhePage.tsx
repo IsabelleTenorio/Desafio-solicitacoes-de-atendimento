@@ -1,17 +1,30 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AppShell } from '../../../components/layout/AppShell';
 import { Spinner } from '../../../components/ui/Spinner';
 import { ErrorState } from '../../../components/ui/ErrorState';
 import { Button } from '../../../components/ui/Button';
+import { SoAdmin } from '../../../components/auth/SoAdmin';
+import { mensagemDeErro } from '../../../lib/http';
 import { useSolicitacao } from '../hooks/useSolicitacao';
+import { atualizarStatusSolicitacao } from '../api';
 import { StatusBadge } from '../components/StatusBadge';
 import { PrioridadeBadge } from '../components/PrioridadeBadge';
+import type { Status } from '../types';
 
 const rotuloCategoria: Record<string, string> = {
   CONSULTA: 'Consulta',
   EXAME: 'Exame',
   VACINACAO: 'Vacinação',
   OUTRO: 'Outro',
+};
+
+const rotuloStatus: Record<Status, string> = {
+  RECEBIDA: 'Recebida',
+  EM_ANALISE: 'Em análise',
+  AGENDADA: 'Agendada',
+  CONCLUIDA: 'Concluída',
+  CANCELADA: 'Cancelada',
 };
 
 function formatarDataHora(iso: string): string {
@@ -25,6 +38,23 @@ export function DetalhePage() {
   const { id } = useParams<{ id: string }>();
   const idNumerico = Number(id);
   const { solicitacao, carregando, erro, recarregar } = useSolicitacao(idNumerico);
+
+  const [statusEmAndamento, setStatusEmAndamento] = useState<Status | null>(null);
+  const [erroAcao, setErroAcao] = useState<string | null>(null);
+
+  async function aoAtualizarStatus(novoStatus: Status) {
+    setStatusEmAndamento(novoStatus);
+    setErroAcao(null);
+
+    try {
+      await atualizarStatusSolicitacao(idNumerico, novoStatus);
+      recarregar();
+    } catch (erroCapturado) {
+      setErroAcao(mensagemDeErro(erroCapturado));
+    } finally {
+      setStatusEmAndamento(null);
+    }
+  }
 
   return (
     <AppShell>
@@ -78,15 +108,32 @@ export function DetalhePage() {
             <div className="mt-6 border-t border-border pt-4">
               <p className="mb-2 text-sm font-medium text-ink-soft">Atualizar status para:</p>
               <div className="flex flex-wrap gap-2">
-                {solicitacao.proximos_status_permitidos.map((proximo) => (
-                  <Button key={proximo} variante="secundaria" disabled>
-                    {proximo}
-                  </Button>
-                ))}
+                {solicitacao.proximos_status_permitidos.map((proximo) => {
+                  const botao = (
+                    <Button
+                      key={proximo}
+                      variante={proximo === 'CANCELADA' ? 'perigo' : 'secundaria'}
+                      disabled={statusEmAndamento !== null}
+                      onClick={() => aoAtualizarStatus(proximo)}
+                    >
+                      {statusEmAndamento === proximo ? 'Atualizando…' : rotuloStatus[proximo]}
+                    </Button>
+                  );
+
+                  // Cancelar é restrito a ADMINISTRADORES
+                  return proximo === 'CANCELADA' ? (
+                    <SoAdmin key={proximo}>{botao}</SoAdmin>
+                  ) : (
+                    botao
+                  );
+                })}
               </div>
-              <p className="mt-2 text-xs text-ink-soft">
-                A ação de atualizar status será habilitada no Dia 4, junto com a autenticação.
-              </p>
+
+              {erroAcao && (
+                <p role="alert" className="mt-3 text-sm text-status-cancelada">
+                  {erroAcao}
+                </p>
+              )}
             </div>
           )}
         </div>
