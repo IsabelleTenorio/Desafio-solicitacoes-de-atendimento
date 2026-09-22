@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
-import { buscarSolicitacao } from '../api';
-import { mensagemDeErro } from '../../../lib/http';
-import type { Solicitacao } from '../types';
+import { useCallback, useEffect, useState } from "react";
+import { buscarSolicitacao } from "../api";
+import { mensagemDeErro } from "../../../lib/http";
+import type { Solicitacao } from "../types";
 
 interface EstadoDetalhe {
   solicitacao: Solicitacao | null;
@@ -28,7 +28,11 @@ export function useSolicitacao(id: number) {
       })
       .catch((erro: unknown) => {
         if (!cancelado) {
-          setEstado({ solicitacao: null, carregando: false, erro: mensagemDeErro(erro) });
+          setEstado({
+            solicitacao: null,
+            carregando: false,
+            erro: mensagemDeErro(erro),
+          });
         }
       });
 

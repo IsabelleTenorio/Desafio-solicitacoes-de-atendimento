@@ -1,20 +1,20 @@
 export const STATUS = [
-  'RECEBIDA',
-  'EM_ANALISE',
-  'AGENDADA',
-  'CONCLUIDA',
-  'CANCELADA',
+  "RECEBIDA",
+  "EM_ANALISE",
+  "AGENDADA",
+  "CONCLUIDA",
+  "CANCELADA",
 ] as const;
 export type Status = (typeof STATUS)[number];
 
-export const CATEGORIAS = ['CONSULTA', 'EXAME', 'VACINACAO', 'OUTRO'] as const;
+export const CATEGORIAS = ["CONSULTA", "EXAME", "VACINACAO", "OUTRO"] as const;
 export type Categoria = (typeof CATEGORIAS)[number];
 
-export const PRIORIDADES = ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE'] as const;
+export const PRIORIDADES = ["BAIXA", "MEDIA", "ALTA", "URGENTE"] as const;
 export type Prioridade = (typeof PRIORIDADES)[number];
 
 /**
- * Espelha exatamente o SolicitacaoResource do backend, então qualquer mudança no contrato da API deve ser 
+ * Espelha exatamente o SolicitacaoResource do backend, então qualquer mudança no contrato da API deve ser
  * refletida aqui primeiro.
  */
 export interface Solicitacao {
