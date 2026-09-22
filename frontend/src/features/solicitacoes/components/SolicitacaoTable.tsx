@@ -30,7 +30,7 @@ export function SolicitacaoTable({
         <caption className="sr-only">
           Lista de solicitações de atendimento
         </caption>
-        <thead className="border-b border-border bg-background text-xs uppercase tracking-wide text-ink-soft">
+        <thead className="border-b border-border bg-white text-xs uppercase tracking-wide text-ink-soft">
           <tr>
             <th scope="col" className="px-4 py-3 font-medium">
               Protocolo

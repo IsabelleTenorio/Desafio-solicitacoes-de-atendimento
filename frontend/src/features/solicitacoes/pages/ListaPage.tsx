@@ -10,6 +10,7 @@ import { FiltrosSolicitacoesForm } from "../components/FiltrosSolicitacoesForm";
 import { SolicitacaoTable } from "../components/SolicitacaoTable";
 import { Paginacao } from "../components/Paginacao";
 import type { FiltrosSolicitacoes } from "../types";
+import { Plus } from "lucide-react";
 
 const FILTROS_INICIAIS: FiltrosSolicitacoes = { page: 1, per_page: 6 };
 
@@ -26,7 +27,10 @@ export function ListaPage() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-lg font-semibold text-ink">Solicitações</h1>
         <Link to="/solicitacoes/nova">
-          <Button>Nova solicitação</Button>
+          <Button>
+            <Plus className="size-5"/>
+            Nova solicitação
+          </Button>
         </Link>
       </div>
 

@@ -11,6 +11,7 @@ import { atualizarStatusSolicitacao } from "../api";
 import { StatusBadge } from "../components/StatusBadge";
 import { PrioridadeBadge } from "../components/PrioridadeBadge";
 import type { Status } from "../types";
+import { ChevronLeft } from "lucide-react";
 
 const rotuloCategoria: Record<string, string> = {
   CONSULTA: "Consulta",
@@ -63,9 +64,10 @@ export function DetalhePage() {
     <AppShell>
       <Link
         to="/"
-        className="mb-4 inline-block text-sm text-primary hover:underline"
+        className="mb-4 flex flex-row text-base text-primary hover:underline items-center"
       >
-        ← Voltar para a lista
+        <ChevronLeft className="size-5"/>
+        Voltar para a lista
       </Link>
 
       {carregando && <Spinner label="Carregando solicitação…" />}

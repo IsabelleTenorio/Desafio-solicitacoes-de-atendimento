@@ -5,6 +5,7 @@ import { mensagemDeErro } from "../../../lib/http";
 import { criarSolicitacao } from "../api";
 import { SolicitacaoForm } from "../components/SolicitacaoForm";
 import type { NovaSolicitacaoFormValues } from "../novaSolicitacaoSchema";
+import { ChevronLeft } from "lucide-react";
 
 export function NovaSolicitacaoPage() {
   const navigate = useNavigate();
@@ -36,9 +37,10 @@ export function NovaSolicitacaoPage() {
     <AppShell>
       <Link
         to="/"
-        className="mb-4 inline-block text-sm text-primary hover:underline"
+        className="mb-4 flex flex-row text-base text-primary hover:underline items-center"
       >
-        ← Voltar para a lista
+        <ChevronLeft className="size-5"/>
+        Voltar para a lista
       </Link>
 
       <div className="rounded-lg border border-border bg-white p-6">
