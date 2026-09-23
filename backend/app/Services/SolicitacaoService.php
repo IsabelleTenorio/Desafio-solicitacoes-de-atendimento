@@ -13,14 +13,15 @@ class SolicitacaoService
     /** Cria uma solicitação com protocolo único e status inicial RECEBIDA */
     public function criar(array $dados): Solicitacao
     {
-        return DB::transaction(function () use ($dados) {
+        $solicitacao = DB::transaction(function () use ($dados) {
             $tentativas = 0;
 
             do {
                 $protocolo = $this->gerarProtocolo();
                 $tentativas++;
             } while (
-                Solicitacao::where('protocolo', $protocolo)->exists() && $tentativas < 5
+                Solicitacao::where('protocolo', $protocolo)->exists()
+                && $tentativas < 5
             );
 
             return Solicitacao::create([
@@ -29,19 +30,34 @@ class SolicitacaoService
                 'status' => StatusSolicitacao::RECEBIDA,
             ]);
         });
+
+        Log::info('solicitacao.criada', [
+            'solicitacao_id' => $solicitacao->id,
+            'protocolo' => $solicitacao->protocolo,
+            'categoria' => $solicitacao->categoria->value,
+            'prioridade' => $solicitacao->prioridade->value,
+        ]);
+
+        return $solicitacao;
     }
 
     /** Único ponto do sistema que altera o status de uma solicitação */
-
     public function atualizarStatus(Solicitacao $solicitacao, StatusSolicitacao $novoStatus): Solicitacao
     {
         $statusAtual = $solicitacao->status;
 
         if (! $statusAtual->podeTransicionarPara($novoStatus)) {
-            throw new TransicaoStatusInvalidaException($statusAtual, $novoStatus);
+            throw new TransicaoStatusInvalidaException($statusAtual, $novoStatus, $solicitacao->id);
         }
 
         $solicitacao->update(['status' => $novoStatus]);
+
+        Log::info('solicitacao.status_atualizado', [
+            'solicitacao_id' => $solicitacao->id,
+            'protocolo' => $solicitacao->protocolo,
+            'de' => $statusAtual->value,
+            'para' => $novoStatus->value,
+        ]);
 
         return $solicitacao->fresh();
     }
