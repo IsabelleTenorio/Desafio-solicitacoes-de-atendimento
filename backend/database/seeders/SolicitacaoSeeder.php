@@ -9,7 +9,11 @@ use Illuminate\Database\Seeder;
 class SolicitacaoSeeder extends Seeder
 {
     public function run(): void
-    {
+    {   if (Solicitacao::query()->exists()) {
+            $this->command?->info('SolicitacaoSeeder: dados já existentes, seed ignorado.');
+            return;
+        }
+        
         Solicitacao::factory()->count(5)->comStatus(StatusSolicitacao::RECEBIDA)->create();
         Solicitacao::factory()->count(4)->comStatus(StatusSolicitacao::EM_ANALISE)->create();
         Solicitacao::factory()->count(3)->comStatus(StatusSolicitacao::AGENDADA)->create();
