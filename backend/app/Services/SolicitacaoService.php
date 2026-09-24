@@ -6,6 +6,7 @@ use App\Enums\StatusSolicitacao;
 use App\Exceptions\TransicaoStatusInvalidaException;
 use App\Models\Solicitacao;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SolicitacaoService

@@ -11,7 +11,7 @@ use Monolog\Logger;
  */
 class JsonLogFormatter
 {
-    public function __invoke(Logger $logger): void
+    public function __invoke($logger): void
     {
         foreach ($logger->getHandlers() as $handler) {
             $handler->setFormatter(new JsonFormatter());
