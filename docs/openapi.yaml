@@ -1,0 +1,424 @@
+openapi: 3.0.3
+info:
+  title: API de Solicitações de Atendimento
+  description: >
+    API REST para registrar e acompanhar solicitações de atendimento em
+    unidades públicas de saúde. Desafio técnico V-Lab.
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Ambiente local (Docker Compose)
+
+tags:
+  - name: Autenticação
+    description: Login, logout e emissão de token (Laravel Sanctum).
+  - name: Solicitações
+    description: Ciclo de vida das solicitações de atendimento.
+  - name: Infraestrutura
+    description: Endpoints operacionais, sem regra de negócio do domínio.
+
+paths:
+  /health:
+    get:
+      operationId: verificarSaude
+      tags: [Infraestrutura]
+      summary: Verifica a saúde da API e da conexão com o banco
+      security: []
+      responses:
+        "200":
+          description: API e banco de dados operacionais
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+        "503":
+          description: Banco de dados inacessível
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /login:
+    post:
+      operationId: autenticar
+      tags: [Autenticação]
+      summary: Autentica um usuário e devolve um token de acesso
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginPayload"
+      responses:
+        "200":
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResposta"
+        "422":
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErroValidacao"
+
+  /logout:
+    post:
+      operationId: encerrarSessao
+      tags: [Autenticação]
+      summary: Revoga o token de acesso atual
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Sessão encerrada com sucesso
+        "401":
+          $ref: "#/components/responses/NaoAutenticado"
+
+  /solicitacoes:
+    get:
+      operationId: listarSolicitacoes
+      tags: [Solicitações]
+      summary: Lista solicitações, com paginação e filtros
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/Status"
+        - name: categoria
+          in: query
+          schema:
+            $ref: "#/components/schemas/Categoria"
+        - name: prioridade
+          in: query
+          schema:
+            $ref: "#/components/schemas/Prioridade"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 15
+      responses:
+        "200":
+          description: Lista paginada de solicitações
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SolicitacaoPaginada"
+        "401":
+          $ref: "#/components/responses/NaoAutenticado"
+        "422":
+          description: Parâmetro de filtro inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErroValidacao"
+
+    post:
+      operationId: criarSolicitacao
+      tags: [Solicitações]
+      summary: Cria uma nova solicitação (status inicial RECEBIDA)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NovaSolicitacaoPayload"
+      responses:
+        "201":
+          description: Solicitação criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SolicitacaoEnvelope"
+        "401":
+          $ref: "#/components/responses/NaoAutenticado"
+        "422":
+          description: >
+            Erro de validação: inclui o caso de prioridade URGENTE sem
+            justificativa preenchida.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErroValidacao"
+
+  /solicitacoes/{id}:
+    get:
+      operationId: consultarSolicitacao
+      tags: [Solicitações]
+      summary: Consulta os detalhes de uma solicitação
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SolicitacaoId"
+      responses:
+        "200":
+          description: Detalhes da solicitação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SolicitacaoEnvelope"
+        "401":
+          $ref: "#/components/responses/NaoAutenticado"
+        "404":
+          $ref: "#/components/responses/NaoEncontrado"
+
+  /solicitacoes/{id}/status:
+    patch:
+      operationId: atualizarStatusSolicitacao
+      tags: [Solicitações]
+      summary: Atualiza o status de uma solicitação
+      description: >
+        Respeita o fluxo de transições do edital (RECEBIDA → EM_ANALISE →
+        AGENDADA → CONCLUIDA, com CANCELADA disponível a partir de
+        RECEBIDA/EM_ANALISE/AGENDADA). A transição para CANCELADA é
+        restrita a usuários com perfil ADMINISTRADOR.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SolicitacaoId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  $ref: "#/components/schemas/Status"
+      responses:
+        "200":
+          description: Status atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SolicitacaoEnvelope"
+        "401":
+          $ref: "#/components/responses/NaoAutenticado"
+        "403":
+          description: >
+            Ação não permitida para o perfil do usuário autenticado
+            (ex.: OPERADOR tentando cancelar).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErroSimples"
+        "404":
+          $ref: "#/components/responses/NaoEncontrado"
+        "409":
+          description: Transição de status inválida para o estado atual
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErroValidacao"
+        "422":
+          description: Valor de status inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErroValidacao"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Token emitido por POST /login (Laravel Sanctum)
+
+  parameters:
+    SolicitacaoId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    NaoAutenticado:
+      description: Token ausente, inválido ou expirado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErroSimples"
+    NaoEncontrado:
+      description: Solicitação não encontrada
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErroSimples"
+
+  schemas:
+    Status:
+      type: string
+      enum: [RECEBIDA, EM_ANALISE, AGENDADA, CONCLUIDA, CANCELADA]
+
+    Categoria:
+      type: string
+      enum: [CONSULTA, EXAME, VACINACAO, OUTRO]
+
+    Prioridade:
+      type: string
+      enum: [BAIXA, MEDIA, ALTA, URGENTE]
+
+    Perfil:
+      type: string
+      enum: [OPERADOR, ADMINISTRADOR]
+
+    LoginPayload:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: operador@vlab.local
+        password:
+          type: string
+          format: password
+          example: senha123
+
+    LoginResposta:
+      type: object
+      properties:
+        token:
+          type: string
+        usuario:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+            perfil:
+              $ref: "#/components/schemas/Perfil"
+
+    NovaSolicitacaoPayload:
+      type: object
+      required: [nome_solicitante, categoria, prioridade, descricao]
+      properties:
+        nome_solicitante:
+          type: string
+          minLength: 3
+          maxLength: 150
+          example: Maria Fictícia
+        categoria:
+          $ref: "#/components/schemas/Categoria"
+        prioridade:
+          $ref: "#/components/schemas/Prioridade"
+        descricao:
+          type: string
+          minLength: 10
+          maxLength: 2000
+        justificativa_prioridade:
+          type: string
+          minLength: 10
+          maxLength: 1000
+          description: Obrigatória quando prioridade = URGENTE.
+          nullable: true
+
+    Solicitacao:
+      type: object
+      properties:
+        id:
+          type: integer
+        protocolo:
+          type: string
+          example: SOL-2026-7F3K9QX2
+        nome_solicitante:
+          type: string
+        categoria:
+          $ref: "#/components/schemas/Categoria"
+        prioridade:
+          $ref: "#/components/schemas/Prioridade"
+        status:
+          $ref: "#/components/schemas/Status"
+        descricao:
+          type: string
+        justificativa_prioridade:
+          type: string
+          nullable: true
+        proximos_status_permitidos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Status"
+          description: Calculado a partir da máquina de estados do enum de status.
+        data_criacao:
+          type: string
+          format: date-time
+        data_atualizacao:
+          type: string
+          format: date-time
+
+    SolicitacaoEnvelope:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Solicitacao"
+
+    SolicitacaoPaginada:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Solicitacao"
+        meta:
+          type: object
+          properties:
+            current_page:
+              type: integer
+            last_page:
+              type: integer
+            per_page:
+              type: integer
+            total:
+              type: integer
+
+    ErroSimples:
+      type: object
+      properties:
+        message:
+          type: string
+
+    ErroValidacao:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, fail]
+        checks:
+          type: object
+          properties:
+            database:
+              type: string
+              enum: [ok, fail]
