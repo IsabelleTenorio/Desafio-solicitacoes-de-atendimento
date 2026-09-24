@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/Button";
 import { mensagemDeErro } from "../../../lib/http";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { HeartPulse } from "lucide-react";
 
 export function LoginPage() {

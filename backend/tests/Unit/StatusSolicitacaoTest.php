@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 use App\Enums\StatusSolicitacao;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class StatusSolicitacaoTest extends TestCase
 {

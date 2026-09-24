@@ -12,6 +12,7 @@ import { StatusBadge } from "../components/StatusBadge";
 import { PrioridadeBadge } from "../components/PrioridadeBadge";
 import type { Status } from "../types";
 import { ChevronLeft } from "lucide-react";
+import { formatarDataHora } from "../../../lib/dataHoraFormatter";
 
 const rotuloCategoria: Record<string, string> = {
   CONSULTA: "Consulta",
@@ -27,13 +28,6 @@ const rotuloStatus: Record<Status, string> = {
   CONCLUIDA: "Concluída",
   CANCELADA: "Cancelada",
 };
-
-function formatarDataHora(iso: string): string {
-  return new Date(iso).toLocaleString("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
-}
 
 export function DetalhePage() {
   const { id } = useParams<{ id: string }>();

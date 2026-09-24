@@ -6,7 +6,7 @@ const usuarioMock = vi.hoisted(() => ({
   usuario: { perfil: "OPERADOR" } as { perfil: string } | null,
 }));
 
-vi.mock("../AuthContext", () => ({
+vi.mock("../hooks/useAuth", () => ({
   useAuth: () => usuarioMock,
 }));
 

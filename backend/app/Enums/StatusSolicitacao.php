@@ -1,8 +1,9 @@
 <?php
 
-Namespace App\Enums;
+namespace App\Enums;
 
-enum StatusSolicitacao: string {
+enum StatusSolicitacao: string
+{
     case RECEBIDA = 'RECEBIDA';
     case EM_ANALISE = 'EM_ANALISE';
     case AGENDADA = 'AGENDADA';
@@ -16,8 +17,7 @@ enum StatusSolicitacao: string {
      *
      * @return self[]
      */
-
-    public function proximosPermitidos(): array 
+    public function proximosPermitidos(): array
     {
         return match ($this) {
             self::RECEBIDA => [self::EM_ANALISE, self::CANCELADA],
@@ -27,18 +27,18 @@ enum StatusSolicitacao: string {
         };
     }
 
-    public function podeTransicionarPara(self $destino): bool 
+    public function podeTransicionarPara(self $destino): bool
     {
         return in_array($destino, $this->proximosPermitidos(), true);
     }
 
-    public function ehFinal(): bool 
+    public function ehFinal(): bool
     {
         return $this->proximosPermitidos() === [];
     }
 
     /** @return string[] */
-    public static function valores(): array 
+    public static function valores(): array
     {
         return array_map(fn (self $status) => $status->value, self::cases());
     }
