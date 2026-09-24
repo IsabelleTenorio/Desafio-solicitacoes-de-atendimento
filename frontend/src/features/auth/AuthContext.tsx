@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await logoutRequest();
     } catch {
+      // Mesmo se o servidor falhar, a sessão local é limpa no finally.
     } finally {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USUARIO_KEY);
