@@ -1,4 +1,4 @@
-import type { SelectHTMLAttributes } from "react";
+import { useId, type SelectHTMLAttributes } from "react";
 
 interface Opcao {
   value: string;
@@ -11,10 +11,9 @@ interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   opcaoVazia?: string;
 }
 
-let contador = 0;
-
 export function Select({ label, opcoes, opcaoVazia, id, ...props }: Props) {
-  const selectId = id ?? `select-${(contador += 1)}`;
+  const idGerado = useId();
+  const selectId = id ?? idGerado;
 
   return (
     <div className="flex flex-col gap-1">
