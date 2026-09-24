@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import type { Solicitacao } from "../types";
 import { StatusBadge } from "./StatusBadge";
 import { PrioridadeBadge } from "./PrioridadeBadge";
+import { formatarData } from "../../../lib/dataHoraFormatter";
 
 const rotuloCategoria: Record<string, string> = {
   CONSULTA: "Consulta",
@@ -9,14 +10,6 @@ const rotuloCategoria: Record<string, string> = {
   VACINACAO: "Vacinação",
   OUTRO: "Outro",
 };
-
-function formatarData(iso: string): string {
-  return new Date(iso).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
 
 export function SolicitacaoTable({
   solicitacoes,
