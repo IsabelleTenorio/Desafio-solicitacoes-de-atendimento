@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatusSolicitacao;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\AtualizarStatusRequest;
 use App\Http\Requests\ListarSolicitacoesRequest;
 use App\Http\Requests\StoreSolicitacaoRequest;
@@ -13,9 +12,7 @@ use App\Services\SolicitacaoService;
 
 class SolicitacaoController extends Controller
 {
-    public function __construct(private readonly SolicitacaoService $service)
-    {
-    }
+    public function __construct(private readonly SolicitacaoService $service) {}
 
     public function index(ListarSolicitacoesRequest $request)
     {

@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use App\Enums\StatusSolicitacao;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class AtualizarStatusRequest extends FormRequest
 {

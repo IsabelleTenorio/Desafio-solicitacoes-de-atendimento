@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('descricao');
             $table->text('justificativa_prioridade')->nullable();
             $table->timestamps(); // created_at / updated_at -> expostos como
-                                  // data_criacao / data_atualizacao no Resource
+            // data_criacao / data_atualizacao no Resource
 
             $table->index(['status', 'prioridade']);
             $table->index('categoria');

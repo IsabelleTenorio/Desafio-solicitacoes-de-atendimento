@@ -67,4 +67,4 @@ class SolicitacaoService
     {
         return sprintf('SOL-%s-%s', date('Y'), strtoupper(Str::random(8)));
     }
-} 
+}
