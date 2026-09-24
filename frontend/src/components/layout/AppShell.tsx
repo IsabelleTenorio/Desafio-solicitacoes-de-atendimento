@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { HeartPulse, LogOut } from "lucide-react";
-import { useAuth } from "../../features/auth/AuthContext";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 
 const rotuloPerfil: Record<string, string> = {
   OPERADOR: "Operador",

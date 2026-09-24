@@ -1,23 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { login as loginRequest, logoutRequest } from "./api";
 import { TOKEN_KEY, USUARIO_KEY } from "../../lib/http";
+import { AuthContext, type AuthContextValor } from "./context";
 import type { LoginPayload, Usuario } from "./types";
-
-interface AuthContextValor {
-  usuario: Usuario | null;
-  autenticado: boolean;
-  entrando: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextValor | null>(null);
 
 function lerUsuarioSalvo(): Usuario | null {
   const bruto = localStorage.getItem(USUARIO_KEY);
@@ -71,12 +56,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth(): AuthContextValor {
-  const contexto = useContext(AuthContext);
-  if (!contexto) {
-    throw new Error("useAuth precisa ser usado dentro de um AuthProvider.");
-  }
-  return contexto;
 }
