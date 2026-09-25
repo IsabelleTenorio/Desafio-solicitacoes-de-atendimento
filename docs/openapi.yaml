@@ -13,6 +13,8 @@ servers:
 tags:
   - name: Autenticação
     description: Login, logout e emissão de token (Laravel Sanctum).
+  - name: Cadastro
+    description: Cadastro de contas de acesso ao sistema.
   - name: Solicitações
     description: Ciclo de vida das solicitações de atendimento.
   - name: Infraestrutura
@@ -77,6 +79,27 @@ paths:
           description: Sessão encerrada com sucesso
         "401":
           $ref: "#/components/responses/NaoAutenticado"
+  
+  /usuarios:
+    post:
+      operationId: cadastrarUsuario
+      tags: [Usuários]
+      summary: Cadastra uma nova conta de usuário
+      description: >
+        Restrito a usuários autenticados com perfil ADMINISTRADOR (não há
+        autocadastro público — o modelo de Solicitacao não vincula usuário
+        autenticado, então contas são criadas pela equipe administrativa).
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegistroPayload" }
+      responses:
+        "201": { description: Usuário cadastrado, content: { application/json: { schema: { $ref: "#/components/schemas/UsuarioEnvelope" } } } }
+        "401": { $ref: "#/components/responses/NaoAutenticado" }
+        "403": { description: Usuário autenticado não tem perfil ADMINISTRADOR, content: { application/json: { schema: { $ref: "#/components/schemas/ErroSimples" } } } }
+        "422": { description: "E-mail já cadastrado, senha/confirmação diferentes, senha curta ou perfil inválido.", content: { application/json: { schema: { $ref: "#/components/schemas/ErroValidacao" } } } }
 
   /solicitacoes:
     get:
@@ -422,3 +445,26 @@ components:
             database:
               type: string
               enum: [ok, fail]
+
+    RegistroPayload:
+      type: object
+      required: [name, email, password, password_confirmation, perfil]
+      properties:
+        name: { type: string, minLength: 3, maxLength: 255 }
+        email: { type: string, format: email }
+        password: { type: string, format: password, minLength: 8 }
+        password_confirmation: { type: string, format: password }
+        perfil: { $ref: "#/components/schemas/Perfil" }
+
+    Usuario:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        perfil: { $ref: "#/components/schemas/Perfil" }
+
+    UsuarioEnvelope:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/Usuario" }

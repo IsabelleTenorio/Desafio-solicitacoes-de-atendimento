@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { HeartPulse, LogOut } from "lucide-react";
+import { HeartPulse, LogOut, UserPlus } from "lucide-react";
 import { useAuth } from "../../features/auth/hooks/useAuth";
+import { SoAdmin } from "../../features/auth/components/SoAdmin";
 
 const rotuloPerfil: Record<string, string> = {
   OPERADOR: "Operador",
@@ -33,6 +34,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                   ({rotuloPerfil[usuario.perfil]})
                 </span>
               </span>
+              <SoAdmin>
+                <Link
+                  to="/usuarios/novo"
+                  className="flex items-center gap-1 rounded-md px-2 py-1 text-ink-soft hover:bg-background hover:text-ink
+                    focus-visible:outline focus-visible:outline-primary"
+                >
+                  <UserPlus className="size-4" aria-hidden />
+                  Cadastrar usuário
+                </Link>
+              </SoAdmin>
               <button
                 type="button"
                 onClick={() => logout()}

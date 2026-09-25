@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\SolicitacaoController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -12,6 +13,8 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
+
+        Route::post('usuarios', [UserController::class, 'store']);
 
         Route::get('solicitacoes', [SolicitacaoController::class, 'index']);
         Route::post('solicitacoes', [SolicitacaoController::class, 'store']);
