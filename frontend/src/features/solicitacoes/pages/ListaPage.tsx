@@ -6,8 +6,10 @@ import { Spinner } from "../../../components/ui/Spinner";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { ErrorState } from "../../../components/ui/ErrorState";
 import { useSolicitacoes } from "../hooks/useSolicitacoes";
+import { useResumoSolicitacoes } from "../hooks/useResumoSolicitacoes";
 import { FiltrosSolicitacoesForm } from "../components/FiltrosSolicitacoesForm";
 import { SolicitacaoTable } from "../components/SolicitacaoTable";
+import { ResumoSolicitacoes } from "../components/ResumoSolicitacoes";
 import { Paginacao } from "../components/Paginacao";
 import type { FiltrosSolicitacoes } from "../types";
 import { Plus } from "lucide-react";
@@ -18,6 +20,8 @@ export function ListaPage() {
   const [filtros, setFiltros] = useState<FiltrosSolicitacoes>(FILTROS_INICIAIS);
   const { dados, carregando, erro, vazio, recarregar } =
     useSolicitacoes(filtros);
+
+  const { dados: resumo } = useResumoSolicitacoes();
 
   const semFiltroAplicado =
     !filtros.status && !filtros.categoria && !filtros.prioridade;
@@ -33,6 +37,8 @@ export function ListaPage() {
           </Button>
         </Link>
       </div>
+
+      {resumo && <ResumoSolicitacoes resumo={resumo} />}
 
       <div className="mb-6 rounded-lg border border-border bg-white p-4">
         <FiltrosSolicitacoesForm filtros={filtros} aoMudar={setFiltros} />
