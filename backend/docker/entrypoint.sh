@@ -8,7 +8,13 @@ fi
 php artisan key:generate --force
 
 echo "Aguardando o PostgreSQL aceitar conexões..."
-until php artisan db:show > /dev/null 2>&1; do
+until php -r '
+new PDO(
+    sprintf("pgsql:host=%s;port=%s;dbname=%s", getenv("DB_HOST"), getenv("DB_PORT"), getenv("DB_DATABASE")),
+    getenv("DB_USERNAME"),
+    getenv("DB_PASSWORD")
+);
+' > /dev/null 2>&1; do
   sleep 2
 done
 echo "PostgreSQL disponível."
