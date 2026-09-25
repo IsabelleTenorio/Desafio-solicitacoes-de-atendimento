@@ -47,6 +47,11 @@ export interface FiltrosSolicitacoes {
   per_page?: number;
 }
 
+export interface ResumoSolicitacoes {
+  por_status: Record<Status, number>;
+  por_prioridade: Record<Prioridade, number>;
+}
+
 export interface PaginacaoMeta {
   current_page: number;
   last_page: number;

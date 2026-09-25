@@ -19,10 +19,6 @@ export function PrioridadeBadge({ prioridade }: { prioridade: Prioridade }) {
     <span
       className={`inline-flex items-center gap-1.5 text-sm font-medium ${corPorPrioridade[prioridade]}`}
     >
-      <span
-        className="h-1.5 w-1.5 rounded-full bg-current"
-        aria-hidden="true"
-      />
       {rotulo[prioridade]}
     </span>
   );

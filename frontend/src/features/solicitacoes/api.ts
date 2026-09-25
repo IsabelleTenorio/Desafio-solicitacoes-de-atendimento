@@ -3,6 +3,7 @@ import type {
   FiltrosSolicitacoes,
   NovaSolicitacaoPayload,
   Paginado,
+  ResumoSolicitacoes,
   Solicitacao,
   Status,
 } from "./types";
@@ -38,6 +39,13 @@ export async function atualizarStatusSolicitacao(
   const { data } = await http.patch<{ data: Solicitacao }>(
     `/solicitacoes/${id}/status`,
     { status },
+  );
+  return data.data;
+}
+
+export async function buscarResumoSolicitacoes(): Promise<ResumoSolicitacoes> {
+  const { data } = await http.get<{ data: ResumoSolicitacoes }>(
+    "/solicitacoes/resumo",
   );
   return data.data;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PrioridadeSolicitacao;
 use App\Enums\StatusSolicitacao;
 use App\Http\Requests\AtualizarStatusRequest;
 use App\Http\Requests\ListarSolicitacoesRequest;
@@ -9,6 +10,7 @@ use App\Http\Requests\StoreSolicitacaoRequest;
 use App\Http\Resources\SolicitacaoResource;
 use App\Models\Solicitacao;
 use App\Services\SolicitacaoService;
+use Illuminate\Support\Facades\DB;
 
 class SolicitacaoController extends Controller
 {
@@ -29,6 +31,28 @@ class SolicitacaoController extends Controller
             ->paginate($request->integer('per_page', 15));
 
         return SolicitacaoResource::collection($solicitacoes);
+    }
+
+    public function resumo()
+    {
+        $porStatus = DB::table('solicitacoes')
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $porPrioridade = DB::table('solicitacoes')
+            ->selectRaw('prioridade, count(*) as total')
+            ->groupBy('prioridade')
+            ->pluck('total', 'prioridade');
+
+        return response()->json([
+            'data' => [
+                'por_status' => collect(StatusSolicitacao::cases())
+                    ->mapWithKeys(fn ($status) => [$status->value => (int) ($porStatus[$status->value] ?? 0)]),
+                'por_prioridade' => collect(PrioridadeSolicitacao::cases())
+                    ->mapWithKeys(fn ($prioridade) => [$prioridade->value => (int) ($porPrioridade[$prioridade->value] ?? 0)]),
+            ],
+        ]);
     }
 
     public function store(StoreSolicitacaoRequest $request)
